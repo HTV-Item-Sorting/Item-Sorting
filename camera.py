@@ -90,8 +90,8 @@ def main():
             results = yolo.track(frame, conf=0.5)
 
             # Process the frame for prediction
-            image_tensor = process_image(frame)
-            prediction, confidence = predict_image(model, image_tensor, class_names)
+            # image_tensor = process_image(frame)
+            # prediction, confidence = predict_image(model, image_tensor, class_names)
 
             # Apply background subtraction
             # fgMask = backSub.apply(frame)
@@ -100,6 +100,8 @@ def main():
             # cv2.rectangle(frame, (10, 2), (100, 20), (255, 255, 255), -1)
             # cv2.putText(frame, str(cam.get(cv2.CAP_PROP_POS_FRAMES)), (15, 15),
             #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+            # Colour
+            colour = (0, 0, 0)
 
             # Display prediction
             for result in results:
@@ -112,8 +114,6 @@ def main():
                     x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
 
                     origin = (x1, y1)
-                    # Colour
-                    colour = (0, 0, 0)
 
                     # make rectangle
                     cv2.rectangle(frame, (x1, y1), (x2, y2), colour, 2)
@@ -124,7 +124,7 @@ def main():
                     # cv2.imshow("cropped", img)
                     if float(confidence) > 85:
                         cv2.putText(frame, f"Prediction: {prediction}", origin,
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, colour, 2)
                         # cv2.putText(img, f"Confidence: {confidence:.2f}%", origin,
                         #         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                         item = prediction
@@ -132,18 +132,17 @@ def main():
                         type_of_waste = categorize_waste(prediction)
                     elif float(confidence) > 50:
                         cv2.putText(frame, f"Prediction: {item}", origin,
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, colour, 2)
                         # cv2.putText(img, f"Confidence: {confidence:.2f}%", origin,
                         #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                     else:
                         cv2.putText(frame, f"No Item Detected", origin,
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, colour, 2)
                         # cv2.putText(img, f"Confidence: {confidence:.2f}%", origin,
                         #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    cv2.putText(frame, f"Type: {type_of_waste}", (x1, y1 - 20),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, colour, 2)
 
-
-            cv2.putText(frame, f"Type: {type_of_waste}", (10, 50),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             # Display the captured frame
             # cv2.imshow("Filtered", fgMask)
             cv2.imshow(window_name, frame)
