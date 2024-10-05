@@ -3,6 +3,7 @@ import torch
 from torchvision import transforms, models
 from PIL import Image
 import numpy as np
+from ultralytics import YOLO
 
 
 def load_model(model_path, num_classes):
@@ -37,6 +38,7 @@ def predict_image(model, image_tensor, class_names):
 def main():
     # Path to your trained model
     model_path = './pythonProject1/waste_classification_model.pth'
+    yolo = YOLO('yolov8s.pt')
 
     # Define your class names in the order they were during training
     class_names = ['battery', 'biodegradable', 'biohazard', 'electronic', 'glass', 'metal', 'paper', 'plastic']
@@ -70,15 +72,27 @@ def main():
     try:
         while True:
             ret, frame = cam.read()
+            type(frame)
             if not ret:
                 print("Failed to grab frame")
                 break
 
             frame = cv2.flip(frame, 1)
+            results = yolo.track(frame, conf=0.5)
 
-            # Process the frame for prediction
-            image_tensor = process_image(frame)
-            prediction, confidence = predict_image(model, image_tensor, class_names)
+            # for result in results:
+            #     for box in result.boxes:
+            #         # check if confidence is greater than 40 percent
+            #         if box.conf[0] > 0.4:
+            #             # get coordinates
+            #             [x1, y1, x2, y2] = box.xyxy[0]
+            #             # convert to int
+            #             x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+            #             # Colour
+            #             colour = (0, 0, 0)
+            #
+            #             # make rectangle
+            #             cv2.rectangle(frame, (x1, y1), (x2, y2), colour, 2)
 
             # Apply background subtraction
             # fgMask = backSub.apply(frame)
@@ -89,19 +103,43 @@ def main():
             #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
 
             # Display prediction
-            if float(confidence) > 85:
-                cv2.putText(frame, f"Prediction: {prediction}", (10, 40),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                # cv2.putText(frame, f"Confidence: {confidence:.2f}%", (10, 60),
-                #         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                item = prediction
-                possibile[item] += confidence
-            elif float(confidence) > 75:
-                cv2.putText(frame, f"Prediction: {item}", (10, 40),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-            else:
-                cv2.putText(frame, f"No Item Detected", (10, 40),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            for result in results:
+                for box in result.boxes:
+                    # print(box.conf[0])
+                    # if box.conf[0] > 0.3:
+                    # get coordinates
+                    [x1, y1, x2, y2] = box.xyxy[0]
+                    # convert to int
+                    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+
+                    origin = (x1, y1)
+                    # Colour
+                    colour = (0, 0, 0)
+
+                    # make rectangle
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), colour, 2)
+                    img = frame[y1:y2, x1:x2]
+                    image_tensor = process_image(img)
+                    prediction, confidence = predict_image(model, image_tensor, class_names)
+                    # Process the frame for prediction
+                    # cv2.imshow("cropped", img)
+                    if float(confidence) > 85:
+                        cv2.putText(frame, f"Prediction: {prediction}", origin,
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                        # cv2.putText(img, f"Confidence: {confidence:.2f}%", origin,
+                        #         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                        item = prediction
+                        possibile[item] += confidence
+                    elif float(confidence) > 50:
+                        cv2.putText(frame, f"Prediction: {item}", origin,
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                        # cv2.putText(img, f"Confidence: {confidence:.2f}%", origin,
+                        #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    else:
+                        cv2.putText(frame, f"No Item Detected", origin,
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                        # cv2.putText(img, f"Confidence: {confidence:.2f}%", origin,
+                        #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
 
 
