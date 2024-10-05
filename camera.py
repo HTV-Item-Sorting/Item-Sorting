@@ -30,9 +30,29 @@ def process_image(image):
 def predict_image(model, image_tensor, class_names):
     with torch.no_grad():
         outputs = model(image_tensor)
-        _, predicted = torch.max(outputs, 1)
-        confidence = torch.nn.functional.softmax(outputs, dim=1)[0] * 100
-        return class_names[predicted.item()], confidence[predicted.item()].item()
+        confidences = torch.nn.functional.softmax(outputs, dim=1)[0] * 100
+        sorted_indices = torch.argsort(confidences, descending=True)
+
+        # If the highest confidence is 'face', return the second highest
+        if class_names[sorted_indices[0]] == 'face':
+            prediction = class_names[sorted_indices[1]]
+            confidence = confidences[sorted_indices[1]].item()
+        else:
+            prediction = class_names[sorted_indices[0]]
+            confidence = confidences[sorted_indices[0]].item()
+
+        return prediction, confidence
+
+
+def categorize_waste(prediction):
+    if prediction in ['paper', 'plastic', 'metal', 'glass']:
+        return "Recycle"
+    elif prediction in ['biohazard', 'electronic', 'battery']:
+        return "Hazard"
+    elif prediction == 'biodegradable':
+        return "Landfill"
+    else:
+        return "Unknown"
 
 
 def main():
@@ -41,7 +61,7 @@ def main():
     yolo = YOLO('yolov8s.pt')
 
     # Define your class names in the order they were during training
-    class_names = ['battery', 'biodegradable', 'biohazard', 'electronic', 'glass', 'metal', 'paper', 'plastic']
+    class_names = ['battery', 'biodegradable', 'biohazard', 'electronic', 'face', 'glass', 'metal', 'paper', 'plastic']
 
     # Load the model
     model = load_model(model_path, len(class_names))
@@ -55,24 +75,13 @@ def main():
     window_name = 'Camera'
     cv2.namedWindow(window_name)
 
-    # backSub = cv2.createBackgroundSubtractorMOG2()
-    pos = [0 for _ in range(8)]
     item = "Empty"
-    possibile = {
-        'battery' : 0,
-        'biodegradable' : 0,
-        'biohazard' : 0,
-        'electronic': 0,
-        'glass': 0,
-        'metal' : 0,
-        'paper' : 0,
-        'plastic' : 0
-    }
+    type_of_waste = "Empty"
+    possible = {name: 0 for name in class_names if name != 'face'}
 
     try:
         while True:
             ret, frame = cam.read()
-            type(frame)
             if not ret:
                 print("Failed to grab frame")
                 break
@@ -80,19 +89,9 @@ def main():
             frame = cv2.flip(frame, 1)
             results = yolo.track(frame, conf=0.5)
 
-            # for result in results:
-            #     for box in result.boxes:
-            #         # check if confidence is greater than 40 percent
-            #         if box.conf[0] > 0.4:
-            #             # get coordinates
-            #             [x1, y1, x2, y2] = box.xyxy[0]
-            #             # convert to int
-            #             x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-            #             # Colour
-            #             colour = (0, 0, 0)
-            #
-            #             # make rectangle
-            #             cv2.rectangle(frame, (x1, y1), (x2, y2), colour, 2)
+            # Process the frame for prediction
+            image_tensor = process_image(frame)
+            prediction, confidence = predict_image(model, image_tensor, class_names)
 
             # Apply background subtraction
             # fgMask = backSub.apply(frame)
@@ -129,7 +128,8 @@ def main():
                         # cv2.putText(img, f"Confidence: {confidence:.2f}%", origin,
                         #         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                         item = prediction
-                        possibile[item] += confidence
+                        possible[item] = possible.get(item, 0) + confidence
+                        type_of_waste = categorize_waste(prediction)
                     elif float(confidence) > 50:
                         cv2.putText(frame, f"Prediction: {item}", origin,
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
@@ -142,7 +142,8 @@ def main():
                         #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
 
-
+            cv2.putText(frame, f"Type: {type_of_waste}", (10, 50),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             # Display the captured frame
             # cv2.imshow("Filtered", fgMask)
             cv2.imshow(window_name, frame)
