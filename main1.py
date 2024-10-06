@@ -9,7 +9,7 @@ import camera
 
 from flask import Flask, render_template, Response
 
-app = Flask(__name__, instance_relative_config=True)
+app = Flask(__name__, instance_relative_config=True, static_url_path='/static')
 
 
 
@@ -26,7 +26,7 @@ def video_feed():
                     
 @app.route('/')
 def login():
-    return render_template("index.html")
+    return render_template("index.html", width=camera.width, height=camera.height)
 
 
 if __name__ == '__main__':
