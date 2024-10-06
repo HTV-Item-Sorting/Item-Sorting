@@ -49,6 +49,7 @@ def categorize_waste(prediction):
         return "Unknown"
 
 
+
 def view():
     model_path = './pythonProject1/waste_classification_model.pth'
     class_names = ['battery', 'biodegradable', 'biohazard', 'electronic', 'face', 'glass', 'metal', 'paper', 'plastic']
