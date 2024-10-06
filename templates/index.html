@@ -144,6 +144,9 @@
             justify-content: center;
             margin: 20px 20px;
 		}
+        li:not(:last-child) {
+            padding-bottom: 20px;
+        }
     </style>
 </head>
 
@@ -151,7 +154,6 @@
     <!-- Main Banner Section -->
     <header class="main-banner">
         <div class="caption">
-            <img src="RE.jpg", alt="logo">
             <h6>Waste Categorization</h6>
 			<img alt="logo" src="{{url_for('static', filename='RE.png')}}" style="width:20%; height:20%;"/>
             <h2>Scan Your Item to Categorize It!</h2>
@@ -174,12 +176,14 @@
 
 			<div class="text-rectangle">
 				<h3>How to Use It?</h3>
-					<li>1. Scroll down to access the webcam</li>
-					<li>2. Position the item in front of the camera</li>
-                    <li>3. The item will be classified as Recycling, Compost, or Hazard</li>
-                    <li>4. If it's Recycling, or Compost put in the respective bin,
+					<p>1. Scroll down to access the webcam</li>
+					<p>2. Position the item in front of the camera</li>
+                    <p>3. The item will be classified as Recycling, Compost, or Hazard</li>
+                    <p>4. If it's Recycling, or Compost put in the respective bin,
                        if it's Hazard don't insert it, and everything else goes in the garbage!</li>
-			</div>
+                    <p></p>
+                    <img alt="garbage" src="{{url_for('static', filename='garbage.png')}}" style="width:90%; height:36%;"/>
+            </div>
 
 			<div class="text-rectangle">
 				<h3>Our Values</h3>
