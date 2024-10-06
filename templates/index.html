@@ -5,15 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Waste Categorization</title>
-
-	<script>
-        document.getElementById('scan-button').addEventListener('click', function() {
-            var videoContainer = document.getElementById('video-container');
-            var videoFeed = document.getElementById('video-feed');
-            videoFeed.src = "/video_feed";
-            videoContainer.style.display = 'block';
-        });
-    </script>
     <style>
         body {
             margin: 0;
@@ -23,11 +14,9 @@
         }
 
         .main-banner {
-			margin-bottom: -70px;
+			margin-bottom: -95px;
 			background-color:#04AA6D;
 			border-bottom-color:#ffffff;
-            background-image: url('banner-image.jpg'); /* Placeholder image */
-            /*background-size: cover;*/
             background-position: center;
             padding: 170px 0;
             text-align: center;
@@ -169,7 +158,10 @@
     <!-- Rectangles Section -->
 		<section class="rectangle-container">
 			<div class="text-rectangle">
-				<p>Waste categorization plays a crucial role in sustainability. By categorizing waste properly, we can reduce environmental harm, optimize resource usage, and decrease landfill dependency.</p>
+				<p>Categorizing your trash plays an important role in reducing our environmental impact. </p>
+				<p>By categorizing our waste properly we reduce landfill disposal, optimize resource usage, and facilitate the process of recycling.</p>
+				<p>Waste categorization is not just a responsible practice; it is a vital step towards creating a sustainable future. 
+				By making conscious decisions about how we dispose of our waste, we can contribute to a healthier planet and encourage others to do the same.</p>
 			</div>
 
 			<div class="text-rectangle">
@@ -179,9 +171,6 @@
 					<li>Position the item in front of the camera for scanning.</li>
 				</ol>
 				<p></p>
-				<div class="centered-button">
-					<a href="/video_feed"><button class="button"><b>Scan Your Item</b></button></a>
-				</div>
 			</div>
 
 			<div class="text-rectangle">
