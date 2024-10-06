@@ -26,7 +26,7 @@ def video_feed():
             mimetype='multipart/x-mixed-replace; boundary=frame')
                     
                     
-@app.route('/index')
+@app.route('/')
 def login():
     return render_template("index.html")
 
