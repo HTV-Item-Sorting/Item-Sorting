@@ -6,6 +6,7 @@ from PIL import Image
 import numpy as np
 import camera
 
+
 from flask import Flask, render_template, Response
 
 

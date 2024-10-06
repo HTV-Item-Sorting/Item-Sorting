@@ -55,6 +55,7 @@ def categorize_waste(prediction):
         return "Unknown"
 
 
+
 def view():
     # Path to your trained model
     model_path = './pythonProject1/waste_classification_model.pth'
