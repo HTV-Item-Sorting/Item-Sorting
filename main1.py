@@ -17,16 +17,11 @@ app = Flask(__name__, instance_relative_config=True)
 def test(test_config=None):
  
     return 'Hello, World!'
-        
-
-
-
-
 
 
 @app.route('/video_feed')
 def video_feed():
-    return Response(camera.main(),
+    return Response(camera.view(),
             mimetype='multipart/x-mixed-replace; boundary=frame')
                     
                     
