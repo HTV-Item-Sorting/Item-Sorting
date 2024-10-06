@@ -17,6 +17,7 @@ filelock==3.6.0
 Flask==3.0.3
 gunicorn==23.0.0
 idna==3.10
+importlib_metadata==8.5.0
 isort==5.13.2
 itsdangerous==2.2.0
 Jinja2==3.1.4
