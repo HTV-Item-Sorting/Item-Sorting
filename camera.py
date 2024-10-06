@@ -105,8 +105,8 @@ def view():
         cv2.putText(frame, f"Type of Waste: {type_of_waste}", (10, 80),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-        cv2.putText(frame, f"Confidence: {confidence}", (10, 120),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        # cv2.putText(frame, f"Confidence: {confidence}", (10, 120),
+        #             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
         # Encode the resized frame
         _, buffer = cv2.imencode('.jpg', frame)
