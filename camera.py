@@ -3,6 +3,12 @@ import torch
 from torchvision import transforms, models
 from PIL import Image
 import numpy as np
+import logging
+
+
+cam = cv2.VideoCapture(0)
+width = cam.get(3)  # float `width`
+height = cam.get(4)  # float `height`
 
 def load_model(model_path, num_classes):
     model = models.resnet18(pretrained=False)
@@ -44,10 +50,9 @@ def categorize_waste(prediction):
     elif prediction in ['biohazard', 'electronic', 'battery']:
         return "Hazard"
     elif prediction == 'biodegradable':
-        return "Landfill"
+        return "Compost"
     else:
         return "Unknown"
-
 
 
 def view():
@@ -56,7 +61,6 @@ def view():
 
     model = load_model(model_path, len(class_names))
 
-    cam = cv2.VideoCapture(0)
     if not cam.isOpened():
         print("Cannot open camera")
         return
@@ -65,15 +69,15 @@ def view():
     type_of_waste = "Empty"
     possible = {name: 0 for name in class_names if name != 'face'}
 
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # Full HD width
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # Full HD height
-
-    # Attempt to set higher quality
-    cam.set(cv2.CAP_PROP_AUTOFOCUS, 1)  # Enable autofocus
-    cam.set(cv2.CAP_PROP_FOCUS, 0)  # Set focus to 0 (may trigger autofocus on some cameras)
-    cam.set(cv2.CAP_PROP_BRIGHTNESS, 128)  # Set brightness (adjust value as needed)
-    cam.set(cv2.CAP_PROP_CONTRAST, 128)  # Set contrast (adjust value as needed)
-    cam.set(cv2.CAP_PROP_SATURATION, 128)  # Set saturation (adjust value as needed)
+    # cam.set(cv2.CAP_PROP_FRAME_WIDTH, width * 0.5)  # Full HD width
+    # cam.set(cv2.CAP_PROP_FRAME_HEIGHT, height * 0.5)  # Full HD height
+    #
+    # # Attempt to set higher quality
+    # cam.set(cv2.CAP_PROP_AUTOFOCUS, 1)  # Enable autofocus
+    # cam.set(cv2.CAP_PROP_FOCUS, 0)  # Set focus to 0 (may trigger autofocus on some cameras)
+    # cam.set(cv2.CAP_PROP_BRIGHTNESS, 128)  # Set brightness (adjust value as needed)
+    # cam.set(cv2.CAP_PROP_CONTRAST, 128)  # Set contrast (adjust value as needed)
+    # cam.set(cv2.CAP_PROP_SATURATION, 128)  # Set saturation (adjust value as needed)
 
     while True:
         ret, frame = cam.read()
@@ -82,37 +86,38 @@ def view():
             break
 
         frame = cv2.flip(frame, 1)
-
         # Resize the frame
-        frame = cv2.resize(frame, (1100, 800))  # You can adjust this size
 
         image_tensor = process_image(frame)
         prediction, confidence = predict_image(model, image_tensor, class_names)
         if float(confidence) > 75:
             cv2.putText(frame, f"Material: {prediction}", (10, 40),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
             item = prediction
             possible[item] = possible.get(item, 0) + confidence
             type_of_waste = categorize_waste(prediction)
         elif float(confidence) > 45:
             cv2.putText(frame, f"Material: {item}", (10, 40),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
         else:
             cv2.putText(frame, f"Not Detecting Item", (10, 40),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
             type_of_waste = "Unknown"
 
         cv2.putText(frame, f"Type of Waste: {type_of_waste}", (10, 80),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
 
         # cv2.putText(frame, f"Confidence: {confidence}", (10, 120),
-        #             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        #             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
 
         # Encode the resized frame
+        # new_frame = cv2.resize(frame, (width * 0.5, height * 0.5))  # You can adjust this size
+        frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
         _, buffer = cv2.imencode('.jpg', frame)
         frame_bytes = buffer.tobytes()
 
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
+        logging.debug("hihihihhihihi")
     cam.release()
