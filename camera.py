@@ -57,7 +57,7 @@ def categorize_waste(prediction):
 
 def view():
     # Path to your trained model
-    model_path = '../pythonProject1/waste_classification_model.pth'
+    model_path = './pythonProject1/waste_classification_model.pth'
     yolo = YOLO('yolov8s.pt')
 
     # Define your class names in the order they were during training
