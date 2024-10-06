@@ -22,6 +22,7 @@ def test(test_config=None):
 
 @app.route('/video_feed')
 def video_feed():
+    test()
     return Response(camera.view(),
             mimetype='multipart/x-mixed-replace; boundary=frame')
                     
