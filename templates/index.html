@@ -138,6 +138,12 @@
             justify-content: center;
             margin: 40px 0;
         }
+
+		.centered-canvas {
+			display: flex;
+            justify-content: center;
+            margin: 20px 20px;
+		}
     </style>
 </head>
 
@@ -146,6 +152,7 @@
     <header class="main-banner">
         <div class="caption">
             <h6>Waste Categorization</h6>
+			<img alt="logo" src="{{url_for('static', filename='RE.png')}}" style="width:20%; height:20%;"/>
             <h2>Scan Your Item to Categorize It!</h2>
             <p>Use this tool to accurately categorize your waste items and contribute to a more sustainable environment.</p>
 			<div class="centered-button">
@@ -180,8 +187,27 @@
 					<p>3. We believe in empowering individuals and communities through education about waste categorization, encouraging responsible behaviors towards waste management.</p>
 			</div>
 		</section>
+		<div class="centered-canvas">
+			<canvas id="canvas" width="{{width * 0.5}}" height="{{height * 0.5}}"></canvas>
+		</div>
 
-    
+		<script >
+			var ctx = document.getElementById("canvas").getContext('2d');
+			var img = new Image();
+			img.src = "{{ url_for('video_feed') }}";
+
+			// need only for static image
+			//img.onload = function(){
+			//    ctx.drawImage(img, 0, 0);
+			//};
+
+			// need only for animated image
+			function refreshCanvas(){
+				ctx.drawImage(img, 0, 0);
+			};
+			window.setInterval("refreshCanvas()", 50);
+
+		</script>
 	</body>
 
 </html>
