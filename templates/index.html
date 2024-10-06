@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Waste Categorization</title>
     <style>
+		html {
+  			scroll-behavior: smooth;
+		}
+
         body {
             margin: 0;
             padding: 0;
@@ -159,7 +163,7 @@
             <h2>Scan Your Item to Categorize It!</h2>
             <p>Use this tool to accurately categorize your waste items and contribute to a more sustainable environment.</p>
 			<div class="centered-button">
-				<a href="/video_feed"><button class="button"><b>Scan Your Item</b></button></a>
+				<a href="#canvas"><button class="button"><b>Scan Your Item</b></button></a>
 			</div>
 		</div>
 		<div class="arrow">&#x2193;</div>
@@ -193,7 +197,7 @@
 			</div>
 		</section>
 		<div class="centered-canvas">
-			<canvas id="canvas" width="{{width * 0.5}}" height="{{height * 0.5}}"></canvas>
+			<canvas id="canvas" outline="black 3px solid" width="{{width * 0.5}}" height="{{height * 0.5}}"></canvas>
 		</div>
 
 		<script >
