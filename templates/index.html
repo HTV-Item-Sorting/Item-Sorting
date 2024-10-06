@@ -142,15 +142,39 @@
             justify-content: center;
             margin: 40px 0;
         }
-
-		.centered-canvas {
-			display: flex;
-            justify-content: center;
-            margin: 20px 20px;
-		}
-        li:not(:last-child) {
-            padding-bottom: 20px;
+	.try {
+		background-color: #F9F5EC;
+		border: 2px solid #04AA6D;
+		border-radius: 10px;
+		box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+		text-align: center;
+		padding: 20px;
+		margin: 40px auto; 
+		max-width: 400px; 
+	}
+		
+	.try-it-out {
+		display: flex;
+		justify-content: center; 
+		align-items: center; 
+		gap: 10px; 
+	}
+		
+	.try-it-out h3 {
+            	font-size: 20px;
+		border-color=#04aa6D;
+           	 color: black;
+            	margin: 0;
         }
+	.arrow2 {
+		font-size: 24px;
+	}
+
+	.centered-canvas {
+		display: flex;
+            	justify-content: center;
+           	 margin: 20px 20px;
+	}
     </style>
 </head>
 
@@ -196,6 +220,17 @@
 					<p>3. We believe in empowering individuals and communities through education about waste categorization, encouraging responsible behaviors towards waste management.</p>
 			</div>
 		</section>
+
+		<center>
+		<section class="try">
+			<div class="try-it-out">
+				<div class="arrow2" style="color: black;">&#x2193;</div>
+				<h3>Try It Out!  </h3>
+				<div class="arrow2" style="color: black;">&#x2193;</div>
+			</div>
+		</section>
+		</center>
+		
 		<div class="centered-canvas">
 			<canvas id="canvas" outline="black 3px solid" width="{{width * 0.5}}" height="{{height * 0.5}}"></canvas>
 		</div>
