@@ -3,6 +3,8 @@ import torch
 from torchvision import transforms, models
 from PIL import Image
 import numpy as np
+import logging
+
 
 cam = cv2.VideoCapture(0)
 width = cam.get(3)  # float `width`
@@ -90,23 +92,23 @@ def view():
         prediction, confidence = predict_image(model, image_tensor, class_names)
         if float(confidence) > 75:
             cv2.putText(frame, f"Material: {prediction}", (10, 40),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
             item = prediction
             possible[item] = possible.get(item, 0) + confidence
             type_of_waste = categorize_waste(prediction)
         elif float(confidence) > 45:
             cv2.putText(frame, f"Material: {item}", (10, 40),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
         else:
             cv2.putText(frame, f"Not Detecting Item", (10, 40),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
             type_of_waste = "Unknown"
 
         cv2.putText(frame, f"Type of Waste: {type_of_waste}", (10, 80),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
 
-        cv2.putText(frame, f"Confidence: {confidence}", (10, 120),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        # cv2.putText(frame, f"Confidence: {confidence}", (10, 120),
+        #             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
 
         # Encode the resized frame
         # new_frame = cv2.resize(frame, (width * 0.5, height * 0.5))  # You can adjust this size
@@ -117,4 +119,5 @@ def view():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
+        logging.debug("hihihihhihihi")
     cam.release()
